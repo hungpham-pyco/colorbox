@@ -2,6 +2,7 @@
 	Colorbox 1.5.14
 	license: MIT
 	http://www.jacklmoore.com/colorbox
+	Extended use classes
 */
 (function ($, document, window) {
 	var
@@ -90,7 +91,8 @@
 
 	// Abstracting the HTML and event identifiers for easy rebranding
 	colorbox = 'colorbox',
-	prefix = 'cbox',
+	colorboxclass = 'b-colorbox',
+	prefix = 'cbox-',
 	boxElement = prefix + 'Element',
 	
 	// Events
@@ -151,7 +153,9 @@
 		var element = document.createElement(tag);
 
 		if (id) {
-			element.id = prefix + id;
+			//element.id = prefix + id;
+			//Use class
+			element.className = prefix + id;
 		}
 
 		if (css) {
@@ -365,7 +369,7 @@
 				// Show colorbox so the sizes can be calculated in older versions of jQuery
 				$box.css({visibility:'hidden', display:'block', opacity:''});
 				
-				$loaded = $tag(div, 'LoadedContent', 'width:0; height:0; overflow:hidden; visibility:hidden');
+				$loaded = $tag(div, 'loaded-content', 'width:0; height:0; overflow:hidden; visibility:hidden');
 				$content.css({width:'', height:''}).append($loaded);
 
 				// Cache values needed for size calculations
@@ -438,40 +442,40 @@
 			init = false;
 			$window = $(window);
 			$box = $tag(div).attr({
-				id: colorbox,
-				'class': $.support.opacity === false ? prefix + 'IE' : '', // class for optional IE8 & lower targeted CSS.
+				'data-id': colorbox,
+				'class': colorboxclass + ' ' + ($.support.opacity === false ? prefix + 'IE' : ''), // class for optional IE8 & lower targeted CSS.
 				role: 'dialog',
 				tabindex: '-1'
 			}).hide();
-			$overlay = $tag(div, "Overlay").hide();
-			$loadingOverlay = $([$tag(div, "LoadingOverlay")[0],$tag(div, "LoadingGraphic")[0]]);
-			$wrap = $tag(div, "Wrapper");
-			$content = $tag(div, "Content").append(
-				$title = $tag(div, "Title"),
-				$current = $tag(div, "Current"),
-				$prev = $('<button type="button"/>').attr({id:prefix+'Previous'}),
-				$next = $('<button type="button"/>').attr({id:prefix+'Next'}),
-				$slideshow = $tag('button', "Slideshow"),
+			$overlay = $tag(div, "overlay").hide();
+			$loadingOverlay = $([$tag(div, "loading-overlay")[0],$tag(div, "loading-graphic")[0]]);
+			$wrap = $tag(div, "wrapper");
+			$content = $tag(div, "content").append(
+				$title = $tag(div, "title"),
+				$current = $tag(div, "current"),
+				$prev = $('<button type="button"/>').attr({'class':prefix+'-previous'}),
+				$next = $('<button type="button"/>').attr({'class':prefix+'-next'}),
+				$slideshow = $tag('button', "slideshow"),
 				$loadingOverlay
 			);
 
-			$close = $('<button type="button"/>').attr({id:prefix+'Close'});
+			$close = $('<button type="button"/>').attr({'class':prefix+'close'});
 			
 			$wrap.append( // The 3x3 Grid that makes up Colorbox
 				$tag(div).append(
-					$tag(div, "TopLeft"),
-					$topBorder = $tag(div, "TopCenter"),
-					$tag(div, "TopRight")
+					$tag(div, "top-left"),
+					$topBorder = $tag(div, "top-center"),
+					$tag(div, "top-right")
 				),
 				$tag(div, false, 'clear:left').append(
-					$leftBorder = $tag(div, "MiddleLeft"),
+					$leftBorder = $tag(div, "middle-left"),
 					$content,
-					$rightBorder = $tag(div, "MiddleRight")
+					$rightBorder = $tag(div, "middle-right")
 				),
 				$tag(div, false, 'clear:left').append(
-					$tag(div, "BottomLeft"),
-					$bottomBorder = $tag(div, "BottomCenter"),
-					$tag(div, "BottomRight")
+					$tag(div, "bottom-left"),
+					$bottomBorder = $tag(div, "bottom-center"),
+					$tag(div, "bottom-right")
 				)
 			).find('div div').css({'float': 'left'});
 			
@@ -754,7 +758,7 @@
 
 		$loaded.remove();
 
-		$loaded = $tag(div, 'LoadedContent').append(object);
+		$loaded = $tag(div, 'loaded-content').append(object);
 		
 		function getWidth() {
 			settings.w = settings.w || $loaded.width();
@@ -952,9 +956,9 @@
 			photo = new Image();
 
 			$(photo)
-			.addClass(prefix + 'Photo')
+			.addClass(prefix + 'photo')
 			.bind('error',function () {
-				prep($tag(div, 'Error').html(settings.get('imgError')));
+				prep($tag(div, 'error').html(settings.get('imgError')));
 			})
 			.one('load', function () {
 				if (request !== requests) {
@@ -1015,7 +1019,7 @@
 		} else if (href) {
 			$loadingBay.load(href, settings.get('data'), function (data, status) {
 				if (request === requests) {
-					prep(status === 'error' ? $tag(div, 'Error').html(settings.get('xhrError')) : $(this).contents());
+					prep(status === 'error' ? $tag(div, 'error').html(settings.get('xhrError')) : $(this).contents());
 				}
 			});
 		}
